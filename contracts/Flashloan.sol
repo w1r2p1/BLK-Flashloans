@@ -21,8 +21,7 @@ contract Flashloan is FlashLoanReceiverBase {
         override
     {
         require(_amount <= getBalanceInternal(address(this), _reserve), "Invalid balance, was the flashLoan successful?");
-        
-
+ 
         uint totalDebt = _amount.add(_fee);
         transferFundsBackToPoolInternal(_reserve, totalDebt);
     }
