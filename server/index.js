@@ -1,17 +1,20 @@
+// # PLUGINS IMPORTS //
 require("dotenv").config()
-const network = require("./config/config-networks")
-const { web3 } = network.mainnet
-const { queryPricing } = require("./pricing")
-const { AMOUNT_DAI_WEI, ONE_WEI } = require("./shared/constants")
+const { AMOUNT_DAI_WEI } = require("./shared/constants")
+const { web3 } = require("./config/config-networks")
 
-const arbitrage = require("./arbitrage")
+// # COMPONENTS IMPORTS //
+const pricing = require("./functions/pricing")
+const arbitrage = require("./functions/arbitrage")
+
+/////////////////////////////////////////////////////////////////////////////
 
 const bootstrap = async () => {
   // web3.eth.subscribe("newBlockHeaders").on("data", async (block) => {
   //   console.log(`New block received. Block # ${block.number}`)
   // })
 
-  const { daiFromKyber, daiFromUniswap } = await queryPricing()
+  const { daiFromKyber, daiFromUniswap } = await pricing()
 
   console.log(
     `Kyber -> Uniswap. Dai input / output: ${web3.utils.fromWei(

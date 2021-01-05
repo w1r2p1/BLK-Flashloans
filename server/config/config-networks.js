@@ -18,7 +18,7 @@ const urls = {
 const addresses = require("./addresses")
 const abis = require("./abis")
 
-module.exports = {
+const networks = {
   mainnet: {
     web3: new Web3(new Web3.providers.WebsocketProvider(urls.ws.mainnet)),
     addresses: addresses.mainnet,
@@ -32,3 +32,5 @@ module.exports = {
     chainId: ChainId.KOVAN,
   },
 }
+
+module.exports = networks.mainnet

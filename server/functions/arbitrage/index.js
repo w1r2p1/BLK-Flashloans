@@ -1,7 +1,10 @@
-const network = require("../config/config-networks")
-const { web3, abis, addresses } = network.mainnet
-const { kyber } = require("../config/config-providers")(web3, abis, addresses)
-const { AMOUNT_DAI_WEI, ONE_WEI } = require("../shared/constants")
+const { web3, abis, addresses } = require("../../config/config-networks")
+const { kyber } = require("../../config/config-providers")(
+  web3,
+  abis,
+  addresses
+)
+const { AMOUNT_DAI_WEI, ONE_WEI } = require("../../shared/constants")
 
 const DIRECTION = {
   KYBER_TO_UNISWAP: 0,

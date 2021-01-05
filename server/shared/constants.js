@@ -1,5 +1,4 @@
-const network = require("../config/config-networks")
-const { web3 } = network.mainnet
+const { web3 } = require("../config/config-networks")
 
 const ONE_WEI = web3.utils.toBN(web3.utils.toWei("1"))
 const AMOUNT_DAI_WEI = web3.utils.toBN(web3.utils.toWei("20000"))
