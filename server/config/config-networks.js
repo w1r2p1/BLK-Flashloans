@@ -2,6 +2,7 @@ const { ChainId } = require("@uniswap/sdk")
 const Web3 = require("web3")
 
 const key = process.env.INFURA_API_KEY
+console.log(key)
 const urls = {
   http: {
     mainnet: "https://mainnet.infura.io/v3/" + key,

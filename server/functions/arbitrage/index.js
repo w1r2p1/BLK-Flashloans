@@ -5,6 +5,7 @@ const { kyber } = require("../../config/config-providers")(
   addresses
 )
 const { AMOUNT_DAI_WEI, ONE_WEI } = require("../../shared/constants")
+const contract = require("../../contracts/Flashloan.json")
 
 const DIRECTION = {
   KYBER_TO_UNISWAP: 0,
@@ -12,28 +13,12 @@ const DIRECTION = {
 }
 
 module.exports = async (daiFromUniswap, daiFromKyber) => {
-  let ethPrice
-
-  const updateEthPrice = async () => {
-    const results = await kyber.methods
-      .getExpectedRate(
-        "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-        addresses.tokens.dai,
-        1
-      )
-      .call()
-
-    ethPrice = web3.utils
-      .toBN("1")
-      .mul(web3.utils.toBN(results.expectedRate))
-      .div(ONE_WEI)
-  }
-
-  await updateEthPrice()
-  setInterval(updateEthPrice, 15000)
+  const { ethPrice } = await queryETHPrice()
+  await queryETHPrice()
+  setInterval(queryETHPrice, 15000)
 
   if (daiFromUniswap.gt(AMOUNT_DAI_WEI)) {
-    const tx = flashloan.methods.initiateFlashloan(
+    const tx = contract.methods.initiateFlashloan(
       addresses.dydx.solo,
       addresses.tokens.dai,
       AMOUNT_DAI_WEI,
@@ -57,7 +42,7 @@ module.exports = async (daiFromUniswap, daiFromKyber) => {
       const data = tx.encodeABI()
       const txData = {
         from: admin,
-        to: flashloan.options.address,
+        to: contract.options.address,
         data,
         gas: gasCost,
         gasPrice,
@@ -68,7 +53,7 @@ module.exports = async (daiFromUniswap, daiFromKyber) => {
   }
 
   if (daiFromKyber.gt(AMOUNT_DAI_WEI)) {
-    const tx = flashloan.methods.initiateFlashloan(
+    const tx = contract.methods.initiateFlashloan(
       addresses.dydx.solo,
       addresses.tokens.dai,
       AMOUNT_DAI_WEI,
@@ -90,7 +75,7 @@ module.exports = async (daiFromUniswap, daiFromKyber) => {
       const data = tx.encodeABI()
       const txData = {
         from: admin,
-        to: flashloan.options.address,
+        to: contract.options.address,
         data,
         gas: gasCost,
         gasPrice,
@@ -99,4 +84,19 @@ module.exports = async (daiFromUniswap, daiFromKyber) => {
       console.log(`Transaction hash: ${receipt.transactionHash}`)
     }
   }
+}
+
+async function queryETHPrice() {
+  const results = await kyber.methods
+    .getExpectedRate(
+      "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      addresses.tokens.dai,
+      1
+    )
+    .call()
+
+  return (ethPrice = web3.utils
+    .toBN("1")
+    .mul(web3.utils.toBN(results.expectedRate))
+    .div(ONE_WEI))
 }

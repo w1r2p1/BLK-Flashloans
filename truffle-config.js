@@ -1,10 +1,14 @@
 // const path = require("path");
 const HDWalletProvider = require("@truffle/hdwallet-provider")
+var NonceTrackerSubprovider = require("web3-provider-engine/subproviders/nonce-tracker")
+
+const path = require("path")
 require("dotenv").config()
 
+console.log(process.env.INFURA_API_KEY)
 module.exports = {
-  // See <http://truffleframework.com/docs/advanced/configuration> to customize your Truffle configuration!
-  // contracts_build_directory: path.join(__dirname, "client/src/contracts"),
+  contracts_build_directory: path.join(__dirname, "server/contracts"),
+
   networks: {
     development: {
       host: "127.0.0.1",
@@ -14,20 +18,32 @@ module.exports = {
       skipDryRun: true,
     },
     ropsten: {
-      provider: new HDWalletProvider(
-        process.env.DEPLOYMENT_ACCOUNT_KEY,
-        "https://ropsten.infura.io/v3/" + process.env.INFURA_API_KEY
-      ),
+      provider: () => {
+        var wallet = new HDWalletProvider(
+          process.env.DEPLOYMENT_ACCOUNT_KEY,
+          "https://ropsten.infura.io/v3/" + process.env.INFURA_API_KEY
+        )
+        var nonceTracker = new NonceTrackerSubprovider()
+        wallet.engine._providers.unshift(nonceTracker)
+        nonceTracker.setEngine(wallet.engine)
+        return wallet
+      },
       network_id: 3,
       gas: 5000000,
       gasPrice: 5000000000, // 5 Gwei
       skipDryRun: true,
     },
     kovan: {
-      provider: new HDWalletProvider(
-        process.env.DEPLOYMENT_ACCOUNT_KEY,
-        "https://kovan.infura.io/v3/" + process.env.INFURA_API_KEY
-      ),
+      provider: () => {
+        var wallet = new HDWalletProvider(
+          process.env.DEPLOYMENT_ACCOUNT_KEY,
+          "https://kovan.infura.io/v3/" + process.env.INFURA_API_KEY
+        )
+        var nonceTracker = new NonceTrackerSubprovider()
+        wallet.engine._providers.unshift(nonceTracker)
+        nonceTracker.setEngine(wallet.engine)
+        return wallet
+      },
       network_id: 42,
       gas: 5000000,
       gasPrice: 5000000000, // 5 Gwei
