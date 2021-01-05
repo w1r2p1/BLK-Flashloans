@@ -9,6 +9,8 @@ const { AMOUNT_DAI_WEI } = require("./shared/constants")
 /////////////////////////////////////////////////////////////////////////////
 
 const bootstrap = async () => {
+  console.log("STAAAARTED!!")
+
   web3.eth.subscribe("newBlockHeaders").on("data", async (block) => {
     console.log(`New block received. Block # ${block.number}`)
 
