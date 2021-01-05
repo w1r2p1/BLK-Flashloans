@@ -9,13 +9,13 @@ const { AMOUNT_DAI_WEI } = require("./shared/constants")
 /////////////////////////////////////////////////////////////////////////////
 
 const bootstrap = async () => {
-  // web3.eth.subscribe("newBlockHeaders").on("data", async (block) => {
-  console.log(`New block received. Block # ${block.number}`)
+  web3.eth.subscribe("newBlockHeaders").on("data", async (block) => {
+    console.log(`New block received. Block # ${block.number}`)
 
-  const { daiFromUniswap, daiFromKyber } = await pricing()
-  logger(daiFromUniswap, daiFromKyber)
-  arbitrage(daiFromUniswap, daiFromKyber)
-  // })
+    const { daiFromUniswap, daiFromKyber } = await pricing()
+    logger(daiFromUniswap, daiFromKyber)
+    arbitrage(daiFromUniswap, daiFromKyber)
+  })
 }
 
 bootstrap()
