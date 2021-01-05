@@ -9,27 +9,13 @@ const AMOUNT_DAI_WEI = web3.utils.toBN(web3.utils.toWei("20000"))
 const queryPricing = async () => {
   const { daiWeth, dai, weth } = await queryDaiAndWethData(addresses, chainId)
 
-  ////////
   const { ethFromKyber, ethFromUniswap } = await getETH(daiWeth, dai)
-
-  ////// / / // /////
-  const kyberDAIAmount = await kyber.methods
-    .getExpectedRate(
-      "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-      addresses.tokens.dai,
-      ethFromUniswap.toString()
-    )
-    .call()
-
-  const uniswapDAIAmount = daiWeth.getOutputAmount(
-    new TokenAmount(weth, ethFromKyber.toString())
+  const { daiFromKyber, daiFromUniswap } = await getDAI(
+    weth,
+    daiWeth,
+    ethFromKyber,
+    ethFromUniswap
   )
-
-  const daiFromKyber = ethFromUniswap
-    .mul(web3.utils.toBN(kyberDAIAmount.expectedRate))
-    .div(ONE_WEI)
-
-  const daiFromUniswap = web3.utils.toBN(uniswapDAIAmount[0].raw.toString())
 
   return {
     AMOUNT_DAI_WEI,
@@ -61,6 +47,31 @@ async function getETH(daiWeth, dai) {
   const ethFromUniswap = web3.utils.toBN(uniswapETHAmount[0].raw.toString())
 
   return { ethFromKyber, ethFromUniswap }
+}
+
+async function getDAI(weth, daiWeth, ethFromKyber, ethFromUniswap) {
+  const kyberDAIAmount = await kyber.methods
+    .getExpectedRate(
+      "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      addresses.tokens.dai,
+      ethFromUniswap.toString()
+    )
+    .call()
+
+  const uniswapDAIAmount = daiWeth.getOutputAmount(
+    new TokenAmount(weth, ethFromKyber.toString())
+  )
+
+  const daiFromKyber = ethFromUniswap
+    .mul(web3.utils.toBN(kyberDAIAmount.expectedRate))
+    .div(ONE_WEI)
+
+  const daiFromUniswap = web3.utils.toBN(uniswapDAIAmount[0].raw.toString())
+
+  return {
+    daiFromKyber,
+    daiFromUniswap,
+  }
 }
 
 async function queryDaiAndWethData(addresses, chainId) {
