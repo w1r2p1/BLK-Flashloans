@@ -1,17 +1,14 @@
+const network = require("../config/config-networks")
+const { web3, abis, addresses } = network.mainnet
+const { kyber } = require("../config/config-providers")(web3, abis, addresses)
+const { AMOUNT_DAI_WEI, ONE_WEI } = require("../shared/constants")
+
 const DIRECTION = {
   KYBER_TO_UNISWAP: 0,
   UNISWAP_TO_KYBER: 1,
 }
 
-module.exports = async (
-  web3,
-  kyber,
-  addresses,
-  daiFromUniswap,
-  daiFromKyber,
-  AMOUNT_DAI_WEI,
-  ONE_WEI
-) => {
+module.exports = async (daiFromUniswap, daiFromKyber) => {
   let ethPrice
 
   const updateEthPrice = async () => {

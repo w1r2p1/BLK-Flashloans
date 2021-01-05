@@ -1,8 +1,8 @@
 require("dotenv").config()
 const network = require("./config/config-networks")
-const { web3, abis, addresses, chainId } = network.mainnet
-const { kyber } = require("./config/config-providers")(web3, abis, addresses)
+const { web3 } = network.mainnet
 const { queryPricing } = require("./pricing")
+const { AMOUNT_DAI_WEI, ONE_WEI } = require("./shared/constants")
 
 const arbitrage = require("./arbitrage")
 
@@ -11,12 +11,7 @@ const bootstrap = async () => {
   //   console.log(`New block received. Block # ${block.number}`)
   // })
 
-  const {
-    AMOUNT_DAI_WEI,
-    ONE_WEI,
-    daiFromKyber,
-    daiFromUniswap,
-  } = await queryPricing()
+  const { daiFromKyber, daiFromUniswap } = await queryPricing()
 
   console.log(
     `Kyber -> Uniswap. Dai input / output: ${web3.utils.fromWei(
@@ -29,15 +24,7 @@ const bootstrap = async () => {
     )} / ${web3.utils.fromWei(daiFromKyber.toString())}`
   )
 
-  arbitrage(
-    web3,
-    kyber,
-    addresses,
-    daiFromUniswap,
-    daiFromKyber,
-    AMOUNT_DAI_WEI,
-    ONE_WEI
-  )
+  arbitrage(daiFromUniswap, daiFromKyber)
 }
 
 bootstrap()

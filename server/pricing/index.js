@@ -3,9 +3,8 @@ const { Fetcher, TokenAmount } = require("@uniswap/sdk")
 const network = require("../config/config-networks")
 const { web3, abis, addresses, chainId } = network.mainnet
 const { kyber } = require("../config/config-providers")(web3, abis, addresses)
+const { AMOUNT_DAI_WEI, ONE_WEI } = require("../shared/constants")
 
-const ONE_WEI = web3.utils.toBN(web3.utils.toWei("1"))
-const AMOUNT_DAI_WEI = web3.utils.toBN(web3.utils.toWei("20000"))
 const queryPricing = async () => {
   const { daiWeth, dai, weth } = await queryDaiAndWethData(addresses, chainId)
 
@@ -17,12 +16,7 @@ const queryPricing = async () => {
     ethFromUniswap
   )
 
-  return {
-    AMOUNT_DAI_WEI,
-    ONE_WEI,
-    daiFromKyber,
-    daiFromUniswap,
-  }
+  return { daiFromKyber, daiFromUniswap }
 }
 
 module.exports = { queryPricing }
