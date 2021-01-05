@@ -1,0 +1,16 @@
+{
+  "name": "flashloan-box",
+  "description": "A truffle box containing all you need to get started with developing flash loans",
+  "version": "1.0.0",
+  "license": "AGPLv3",
+  "author": "Artem Moshnin",
+  "homepage": "https://docs.aave.com/developers/tutorials/performing-a-flash-loan/...-with-truffle",
+  "repository": "https://github.com/aave/flashloan-box",
+  "dependencies": {},
+  "devDependencies": {
+    "@openzeppelin/contracts": "^3.0.0",
+    "@truffle/hdwallet-provider": "^1.0.37",
+    "dotenv": "^8.2.0",
+    "truffle": "^5.1.32"
+  }
+}
