@@ -2,7 +2,7 @@ require("dotenv").config()
 const network = require("./config/config-networks")
 const { web3, abis, addresses, chainId } = network.mainnet
 const { kyber } = require("./config/config-providers")(web3, abis, addresses)
-const { queryPricing } = require("./pricing/pricer")
+const { queryPricing } = require("./pricing")
 
 const arbitrage = require("./arbitrage")
 
@@ -16,7 +16,7 @@ const bootstrap = async () => {
     ONE_WEI,
     daiFromKyber,
     daiFromUniswap,
-  } = await queryPricing(web3, kyber, addresses, chainId)
+  } = await queryPricing()
 
   console.log(
     `Kyber -> Uniswap. Dai input / output: ${web3.utils.fromWei(
