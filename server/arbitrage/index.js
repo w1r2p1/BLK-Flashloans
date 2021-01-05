@@ -1,4 +1,37 @@
-module.exports = async (daiFromUniswap, daiFromKyber) => {
+const DIRECTION = {
+  KYBER_TO_UNISWAP: 0,
+  UNISWAP_TO_KYBER: 1,
+}
+
+module.exports = async (
+  web3,
+  kyber,
+  addresses,
+  daiFromUniswap,
+  daiFromKyber,
+  AMOUNT_DAI_WEI,
+  ONE_WEI
+) => {
+  let ethPrice
+
+  const updateEthPrice = async () => {
+    const results = await kyber.methods
+      .getExpectedRate(
+        "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        addresses.tokens.dai,
+        1
+      )
+      .call()
+
+    ethPrice = web3.utils
+      .toBN("1")
+      .mul(web3.utils.toBN(results.expectedRate))
+      .div(ONE_WEI)
+  }
+
+  await updateEthPrice()
+  setInterval(updateEthPrice, 15000)
+
   if (daiFromUniswap.gt(AMOUNT_DAI_WEI)) {
     const tx = flashloan.methods.initiateFlashloan(
       addresses.dydx.solo,
@@ -15,6 +48,7 @@ module.exports = async (daiFromUniswap, daiFromKyber) => {
       .toBN(gasCost)
       .mul(web3.utils.toBN(gasPrice))
       .mul(ethPrice)
+
     const profit = daiFromUniswap.sub(AMOUNT_DAI_WEI).sub(txCost)
 
     if (profit > 0) {
